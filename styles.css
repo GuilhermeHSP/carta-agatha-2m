@@ -1,0 +1,362 @@
+/* Reset e configurações base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 25%, #ffd4e5 50%, #ffcce0 75%, #ffb8d6 100%);
+    position: relative;
+    cursor: default;
+}
+
+/* Partículas flutuantes de coração */
+.floating-hearts {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.heart {
+    position: absolute;
+    font-size: 20px;
+    animation: float 8s infinite ease-in-out;
+    opacity: 0.3;
+    color: rgba(255, 182, 193, 0.6);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.3;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(50px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Container principal do envelope */
+.envelope-container {
+    position: relative;
+    width: 400px;
+    height: 280px;
+    transform: rotate(-5deg);
+    transition: transform 0.3s ease;
+    z-index: 10;
+}
+
+.envelope-container:hover {
+    transform: rotate(-5deg) scale(1.02);
+}
+
+/* Indicação de clique */
+.click-hint {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #8b5a8c;
+    opacity: 0;
+    animation: pulse 2s infinite;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Estrutura do envelope */
+.envelope {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff8f0 0%, #fef5e7 100%);
+    border-radius: 8px;
+    box-shadow: 
+        0 10px 30px rgba(139, 69, 19, 0.2),
+        inset 0 0 20px rgba(139, 69, 19, 0.05);
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* Textura do papel */
+.envelope::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.1) 10px,
+            rgba(255, 255, 255, 0.1) 20px
+        );
+    pointer-events: none;
+}
+
+/* Aba do envelope */
+.envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(135deg, #fff8f0 0%, #fef5e7 100%);
+    transform-origin: top center;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    box-shadow: 0 -2px 10px rgba(139, 69, 19, 0.1);
+}
+
+.envelope-flap.open {
+    transform: rotateX(-180deg);
+}
+
+/* Selo/coração */
+.seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    z-index: 3;
+    transition: all 0.6s ease;
+}
+
+.seal-inner {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+    clip-path: path('M30,10 C20,0 10,0 10,15 C10,30 30,50 30,50 C30,50 50,30 50,15 C50,0 40,0 30,10 Z');
+    box-shadow: 
+        0 4px 15px rgba(196, 69, 105, 0.4),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: heartbeat 2s infinite ease-in-out;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.seal.broken .seal-inner {
+    animation: breakSeal 0.6s ease forwards;
+}
+
+@keyframes breakSeal {
+    0% { 
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% { 
+        transform: scale(0.8) rotate(-5deg) translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* Carta interna - Ajustado para melhor visualização */
+.letter {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 80%;
+    max-width: 600px;
+    height: 80vh;
+    max-height: 700px;
+    background: linear-gradient(to right, #fefefe 0%, #f8f8f8 10%, #fefefe 100%);
+    padding: 40px 30px;
+    border-radius: 3px;
+    box-shadow: 
+        0 5px 25px rgba(0, 0, 0, 0.15),
+        inset 0 0 30px rgba(139, 69, 19, 0.05);
+    opacity: 0;
+    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 5;
+    font-family: 'Dancing Script', cursive;
+    font-size: 22px;
+    line-height: 1.8;
+    color: #5a3e36;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.letter.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* Textura da carta */
+.letter::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(139, 69, 19, 0.03) 2px,
+            rgba(139, 69, 19, 0.03) 4px
+        );
+    pointer-events: none;
+}
+
+/* Conteúdo da carta */
+.letter-content {
+    position: relative;
+    z-index: 1;
+    animation: subtleMove 4s infinite ease-in-out;
+}
+
+@keyframes subtleMove {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+.letter-text {
+    margin-bottom: 30px;
+    white-space: pre-wrap;
+    text-align: justify;
+}
+
+.signature {
+    text-align: right;
+    margin-top: 40px;
+    font-size: 24px;
+    color: #8b5a8c;
+    font-style: italic;
+}
+
+/* Botão de música */
+.music-toggle {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.music-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 1);
+}
+
+.music-toggle svg {
+    width: 24px;
+    height: 24px;
+    fill: #8b5a8c;
+}
+
+/* Animação de ripple */
+@keyframes ripple {
+    0% {
+        width: 20px;
+        height: 20px;
+        opacity: 1;
+    }
+    100% {
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .envelope-container {
+        width: 350px;
+        height: 245px;
+    }
+
+    .letter {
+        width: 85%;
+        padding: 30px 25px;
+        font-size: 20px;
+    }
+
+    .click-hint {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .envelope-container {
+        width: 320px;
+        height: 224px;
+    }
+
+    .letter {
+        width: 90%;
+        padding: 25px 20px;
+        font-size: 18px;
+        height: 85vh;
+    }
+
+    .click-hint {
+        font-size: 11px;
+    }
+
+    .letter-text {
+        font-size: 16px;
+    }
+
+    .signature {
+        font-size: 20px;
+    }
+}
+
+@media (max-height: 700px) {
+    .letter {
+        height: 75vh;
+        font-size: 20px;
+    }
+}
+
+@media (max-height: 600px) {
+    .letter {
+        height: 70vh;
+        font-size: 18px;
+        padding: 20px 15px;
+    }
+}
