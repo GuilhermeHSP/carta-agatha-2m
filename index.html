@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta de Amor Digital</title>
+    <style>
+        /* Reset e configurações base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 25%, #ffd4e5 50%, #ffcce0 75%, #ffb8d6 100%);
+            position: relative;
+            cursor: default;
+        }
+
+        /* Partículas flutuantes de coração */
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 8s infinite ease-in-out;
+            opacity: 0.3;
+            color: rgba(255, 182, 193, 0.6);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Container principal do envelope */
+        .envelope-container {
+            position: relative;
+            width: 400px;
+            height: 280px;
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .envelope-container:hover {
+            transform: rotate(-5deg) scale(1.02);
+        }
+
+        /* Indicação de clique */
+        .click-hint {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #8b5a8c;
+            opacity: 0;
+            animation: pulse 2s infinite;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Estrutura do envelope */
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fff8f0 0%, #fef5e7 100%);
+            border-radius: 8px;
+            box-shadow: 
+                0 10px 30px rgba(139, 69, 19, 0.2),
+                inset 0 0 20px rgba(139, 69, 19, 0.05);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Textura do papel */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255, 255, 255, 0.1) 10px,
+                    rgba(255, 255, 255, 0.1) 20px
+                );
+            pointer-events: none;
+        }
+
+        /* Aba do envelope */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #fff8f0 0%, #fef5e7 100%);
+            transform-origin: top center;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            box-shadow: 0 -2px 10px rgba(139, 69, 19, 0.1);
+        }
+
+        .envelope-flap.open {
+            transform: rotateX(-180deg);
+        }
+
+        /* Selo/coração */
+        .seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            z-index: 3;
+            transition: all 0.6s ease;
+        }
+
+        .seal-inner {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            clip-path: path('M30,10 C20,0 10,0 10,15 C10,30 30,50 30,50 C30,50 50,30 50,15 C50,0 40,0 30,10 Z');
+            box-shadow: 
+                0 4px 15px rgba(196, 69, 105, 0.4),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: heartbeat 2s infinite ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .seal.broken .seal-inner {
+            animation: breakSeal 0.6s ease forwards;
+        }
+
+        @keyframes breakSeal {
+            0% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            100% { 
+                transform: scale(0.8) rotate(-5deg) translateY(20px);
+                opacity: 0;
+            }
+        }
+
+        /* Carta interna */
+        .letter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 360px;
+            min-height: 450px;
+            background: linear-gradient(to right, #fefefe 0%, #f8f8f8 10%, #fefefe 100%);
+            padding: 40px 30px;
+            border-radius: 3px;
+            box-shadow: 
+                0 5px 25px rgba(0, 0, 0, 0.15),
+                inset 0 0 30px rgba(139, 69, 19, 0.05);
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+            font-family: 'Dancing Script', cursive;
+            font-size: 22px;
+            line-height: 1.8;
+            color: #5a3e36;
+        }
+
+        .letter.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Textura da carta */
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.03) 2px,
+                    rgba(139, 69, 19, 0.03) 4px
+                );
+            pointer-events: none;
+        }
+
+        /* Conteúdo da carta */
+        .letter-content {
+            position: relative;
+            z-index: 1;
+            animation: subtleMove 4s infinite ease-in-out;
+        }
+
+        @keyframes subtleMove {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        .letter-text {
+            margin-bottom: 30px;
+            white-space: pre-wrap;
+            text-align: justify;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 40px;
+            font-size: 24px;
+            color: #8b5a8c;
+            font-style: italic;
+        }
+
+        /* Botão de música */
+        .music-toggle {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .music-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: #8b5a8c;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .envelope-container {
+                width: 320px;
+                height: 224px;
+            }
+
+            .letter {
+                width: 280px;
+                padding: 30px 20px;
+                font-size: 18px;
+            }
+
+            .click-hint {
+                font-size: 12px;
+            }
+        }
+
+        /* Google Fonts import */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+    </style>
+</head>
+<body>
+    <!-- Partículas flutuantes -->
+    <div class="floating-hearts" id="heartsContainer"></div>
+
+    <!-- Container do envelope -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="envelope-flap" id="flap"></div>
+            <div class="seal" id="seal">
+                <div class="seal-inner"></div>
+            </div>
+        </div>
+        <div class="click-hint">Clique para abrir sua carta 💕</div>
+    </div>
+
+    <!-- Carta -->
+    <div class="letter" id="letter">
+        <div class="letter-content">
+            <div class="letter-text">
+Meu amor,
+
+Hoje nós completamos dois meses juntos.
+
+São 61 dias, ou 1.464 horas, ou 87.840 minutos… e, ainda assim, parece tão pouco.
+
+Me deixa imensamente feliz saber que esses são apenas os primeiros 61 dias de uma vida inteira que eu quero passar ao seu lado. Em tão pouco tempo, você já se tornou minha melhor amiga, meu porto seguro, alguém em quem confio de olhos fechados e, principalmente, a pessoa com quem sonho em construir uma família e me casar. Eu sei que ainda nem te pedi em namoro oficialmente, mas o meu coração sente que somos namorados desde o momento em que te vi — e somos mesmo, viu, mocinha?!
+
+Todos os dias eu tenho vontade de ser uma pessoa melhor por você e pra você.
+
+Amor, você transformou a minha vida desde o primeiro segundo em que entrou nela. Você me faz rir, me consola quando estou triste, cuida de mim como ninguém nunca cuidou e deu vida à minha vida. Sou imensamente grato por ter você comigo todos os dias. O que mais eu poderia querer?
+
+Você é o meu sonho, Agatha. Eu te amo mil milhões, meu amorzinho! ❤️
+
+            </div>
+            <div class="signature">
+                Com amor,<br>Guilherme
+            </div>
+        </div>
+    </div>
+
+    <!-- Controle de música -->
+    <div class="music-toggle" id="musicToggle" title="Tocar música romântica">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </div>
+
+    <!-- Áudio (simulado - em produção, adicione um arquivo de áudio real) -->
+    <audio id="romanticMusic" loop>
+        <!-- Substitua com um arquivo de áudio real -->
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+
+    <script>
+        // Estado da aplicação
+        let isOpen = false;
+        let isPlaying = false;
+        const envelope = document.getElementById('envelope');
+        const flap = document.getElementById('flap');
+        const seal = document.getElementById('seal');
+        const letter = document.getElementById('letter');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const musicToggle = document.getElementById('musicToggle');
+        const romanticMusic = document.getElementById('romanticMusic');
+        const heartsContainer = document.getElementById('heartsContainer');
+
+        // Criar partículas flutuantes
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heartsContainer.appendChild(heart);
+
+            // Remover coração após animação
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+
+        // Gerar corações periodicamente
+        setInterval(createHeart, 2000);
+        // Criar alguns corações iniciais
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createHeart, i * 1000);
+        }
+
+        // Abrir envelope
+        function openEnvelope() {
+            if (isOpen) return;
+            
+            isOpen = true;
+            
+            // Animar selo quebrando
+            seal.classList.add('broken');
+            
+            // Abrir aba do envelope
+            setTimeout(() => {
+                flap.classList.add('open');
+            }, 300);
+            
+            // Mostrar carta
+            setTimeout(() => {
+                letter.classList.add('visible');
+                // Esconder envelope gradualmente
+                envelopeContainer.style.opacity = '0.3';
+                envelopeContainer.style.transform = 'rotate(-5deg) scale(0.9)';
+                
+                // Criar explosão de corações
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => createHeart(), i * 100);
+                }
+            }, 800);
+            
+            // Tocar música se não estiver tocando
+            if (!isPlaying) {
+                toggleMusic();
+            }
+        }
+
+        // Controle de música
+        function toggleMusic() {
+            if (isPlaying) {
+                romanticMusic.pause();
+                musicToggle.innerHTML = `
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                `;
+            } else {
+                romanticMusic.play().catch(e => console.log('Autoplay bloqueado'));
+                musicToggle.innerHTML = `
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                `;
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Event listeners
+        envelope.addEventListener('click', openEnvelope);
+        musicToggle.addEventListener('click', toggleMusic);
+
+        // Efeito parallax sutil no mouse move
+        document.addEventListener('mousemove', (e) => {
+            if (!isOpen) return;
+            
+            const x = (e.clientX - window.innerWidth / 2) / window.innerWidth;
+            const y = (e.clientY - window.innerHeight / 2) / window.innerHeight;
+            
+            letter.style.transform = `translateX(-50%) translateY(0) rotateX(${y * 5}deg) rotateY(${x * 5}deg)`;
+        });
+
+        // Resetar animação ao sair do mouse
+        document.addEventListener('mouseleave', () => {
+            if (isOpen) {
+                letter.style.transform = 'translateX(-50%) translateY(0)';
+            }
+        });
+
+        // Adicionar efeito de brilho ao clicar na carta
+        letter.addEventListener('click', function(e) {
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.background = 'radial-gradient(circle, rgba(255,182,193,0.6) 0%, transparent 70%)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.animation = 'ripple 0.6s ease-out';
+            
+            const rect = this.getBoundingClientRect();
+            ripple.style.left = (e.clientX - rect.left) + 'px';
+            ripple.style.top = (e.clientY - rect.top) + 'px';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+
+        // Adicionar animação de ripple
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                0% {
+                    width: 20px;
+                    height: 20px;
+                    opacity: 1;
+                }
+                100% {
+                    width: 100px;
+                    height: 100px;
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Prevenir seleção de texto durante animações
+        document.addEventListener('selectstart', (e) => {
+            if (!isOpen) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
